@@ -36,6 +36,7 @@ Plots2::Application.routes.draw do
   get 'login' => "user_sessions#new",      :as => :login
   get 'logout' => "user_sessions#destroy", :as => :logout
   get 'logoutRemotely' => 'user_sessions#logout_remotely'
+  get 'users' => 'users#index'
   post 'register' => 'users#create'
   get 'reset' => 'users#reset'
   post 'reset' => 'users#reset'
@@ -110,10 +111,18 @@ Plots2::Application.routes.draw do
 
   get 'place/:id/feed' => 'place#feed'
   get 'n/:id' => 'notes#shortlink'
+  get 'i/:id' => 'images#shortlink'
+  get 'p/:id' => 'users#shortlink'
+  get 'notes' => 'notes#index'
   get 'notes/raw/:id' => 'notes#raw'
   get 'notes/popular' => 'notes#popular'
   get 'notes/liked' => 'notes#liked'
+  get 'notes/image/:id' => 'notes#image'
+  post 'notes/delete/:id' => 'notes#delete'
+  post 'notes/update/:id' => 'notes#update'
+  post 'notes/update/:id' => 'notes#edit'
   post 'notes/create' => 'notes#create'
+  get 'notes/publish_draft/:id' => 'notes#publish_draft'
 
   get 'places' => 'notes#places'
   get 'tools' => 'notes#tools'
@@ -161,7 +170,7 @@ Plots2::Application.routes.draw do
   get 'contributors' => 'tag#contributors_index'
   get 'tags' => 'tag#index'
   get 'tags/:search' => 'tag#index'
-  get 'tag/suggested/:id' => 'tag#suggested'
+  post 'tag/suggested/:id' => 'tag#suggested'
   get 'tag/author/:id.json' => 'tag#author'
   post 'tag/create/:nid' => 'tag#create'
   get 'tag/create/:nid' => 'tag#create'
@@ -197,6 +206,10 @@ Plots2::Application.routes.draw do
   post 'profile/tags/create/:id' => 'user_tags#create'
   get 'profile/tags/create/:id' => 'user_tags#create'
   delete 'profile/tags/delete/:id' => 'user_tags#delete'
+  get 'user_tags' => 'user_tags#index'
+  get 'user_tags/:search' => 'user_tags#index'
+  get 'groups' => 'user_tags#index'
+  get 'groups/:search' => 'user_tags#index'
 
 
   get 'maps' => 'map#index'
@@ -208,6 +221,7 @@ Plots2::Application.routes.draw do
   delete 'map/delete/:id' => 'map#delete'
   get 'map/:name/:date' => 'map#show'
   get 'archive' => 'map#index'
+  get 'stats/range' => 'stats#range'
   get 'stats' => 'stats#index'
   get 'stats/range/:start/:end' => 'stats#range'
   get 'stats/subscriptions' => 'stats#subscriptions'
@@ -235,10 +249,14 @@ Plots2::Application.routes.draw do
   get 'admin/migrate/:id' => 'admin#migrate'
   get 'admin/moderate/:id' => 'admin#moderate'
   get 'admin/unmoderate/:id' => 'admin#unmoderate'
+  get 'admin/publish_comment/:id' => 'admin#publish_comment'
+  post 'admin/mark_comment_spam/:id' => 'admin#mark_comment_spam'
 
   get 'post' => 'editor#post'
+  post 'post' => 'editor#post'
   get 'legacy' => 'editor#legacy'
   get 'editor' => 'editor#editor'
+  get 'editor/rich/(:n)' => 'editor#rich'
   post 'images/create' => 'images#create'
   put 'note/add' => 'legacy#note_add'
   put 'page/add' => 'legacy#page_add'
@@ -255,6 +273,8 @@ Plots2::Application.routes.draw do
   get 'questions/unanswered(/:tagnames)' => 'questions#unanswered'
   get 'questions/liked(/:tagnames)' => 'questions#liked'
 
+  post 'users/test_digest_email' => 'users#test_digest_email'
+
   post 'answers/create/:nid' => 'answers#create'
   get 'answers/create/:nid' => 'answers#create'
   put 'answers/update/:id' => 'answers#update'
@@ -266,7 +286,11 @@ Plots2::Application.routes.draw do
 
 
   get 'comment/answer_create/:aid' => 'comment#answer_create'
+  get 'comment/delete/:id' => 'comment#delete'
+  post 'comment/update/:id' => 'comment#update'
   post 'comment/make_answer/:id' => 'comment#make_answer'
+  post '/comment/like' => 'comment#like_comment'
+  post 'comment/create/:id' => 'comment#create'
   # Sample resource route (maps HTTP verbs to controller actions automatically):
   #   resources :products
 
@@ -316,5 +340,4 @@ Plots2::Application.routes.draw do
   #handling omniauth callbacks
   match '/auth/:provider/callback', to: 'sessions#create', via: [:get, :post]
 
-  match ':controller(/:action(/:id))(.:format)', via: [:get, :post]
 end

@@ -1,7 +1,8 @@
 # Dockerfile # Plots2
 # https://github.com/publiclab/plots2
 
-FROM node:8-stretch
+# FROM node:8-stretch
+FROM ruby:2.4.1-jessie
 
 LABEL maintainer="Sebastian Silva <sebastian@fuentelibre.org>"
 LABEL description="This image deploys Plots2."
@@ -18,7 +19,8 @@ ENV PHANTOMJS_VERSION 2.1.1
 #    > /etc/apt/sources.list
 
 # Install dependencies
-RUN apt-get update -qq && apt-get install -y bundler ruby-rmagick libfreeimage3 nodejs-legacy wget procps ruby-bundler ruby
+RUN apt-get update -qq && apt-get install -y bundler libmysqlclient-dev ruby-rmagick libfreeimage3 nodejs-legacy npm wget procps cron make
+# maybe ruby-bundler ruby ?
 RUN wget https://github.com/Medium/phantomjs/releases/download/v$PHANTOMJS_VERSION/phantomjs-$PHANTOMJS_VERSION-linux-x86_64.tar.bz2 -O /tmp/phantomjs-$PHANTOMJS_VERSION-linux-x86_64.tar.bz2; tar -xvf /tmp/phantomjs-$PHANTOMJS_VERSION-linux-x86_64.tar.bz2 -C /opt ; cp /opt/phantomjs-$PHANTOMJS_VERSION-linux-x86_64/bin/* /usr/local/bin/
 
 # Install yarn
